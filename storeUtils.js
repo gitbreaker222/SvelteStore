@@ -1,5 +1,13 @@
 import { writable } from 'svelte/store';
 
+const checkType = (value, newValue) => {
+	const t1 = typeof value
+	const t2 = typeof newValue
+	if (t1 !== t2){
+		console.warn(`Type warning: Expected ${t1}, got ${t2}`)
+	}
+}
+
 export const useObservable = (state) => {
 	const keys = Object.keys(state)
 	const storeIn = {}
@@ -11,12 +19,12 @@ export const useObservable = (state) => {
 		const _update = (cb) => {
 			update(value => {
 				const newValue = cb(value)
+				checkType(value, newValue)
 				const stateLog = {
 					old: value,
 					new: newValue,
 				}
 				console.table({[key]: stateLog})
-				//console.info(`update "${key}" (old:new):`, value, newValue)
 				state[key] = newValue
 				return newValue
 			})
