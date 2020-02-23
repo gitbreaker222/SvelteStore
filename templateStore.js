@@ -8,7 +8,7 @@ function State () {return {
 
 const [storeIn, storeOut, getState] = useObservable(new State)
 console.info('State:', getState())
-export const playlistStore = storeOut
+export const templateStore = storeOut
 
 // Actions
 export function reset () {
