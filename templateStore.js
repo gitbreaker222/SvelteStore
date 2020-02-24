@@ -6,8 +6,8 @@ function State () {return {
 	list: [],
 }}
 
-const [storeIn, storeOut, getState] = useObservable(new State)
-console.info('State:', getState())
+const [storeIn, storeOut, state] = useObservable(new State)
+console.info('State:', state)
 export const templateStore = storeOut
 
 // Actions
@@ -18,7 +18,7 @@ export function reset () {
 }
 
 export async function demoAction () {
-	const {num, list} = getState()
+	const {num, list} = state
 	list.push(num)
 	const numDouble = num * 2
 	const result = await apiCall()
