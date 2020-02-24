@@ -8,31 +8,41 @@ const checkType = (value, newValue) => {
 	}
 }
 
+let update = {}
+const logUpdate = (value, newValue, key) => {
+	update[key] = {
+		current: value,
+		new: newValue,
+	}
+	setTimeout(() => {
+		if (!Object.keys(update).length) return
+		console.table(update)
+		update = {}
+	},0)
+}
+
+const deepCopy = (value) => JSON.parse(JSON.stringify(value))
+
 export const useObservable = (state) => {
 	const keys = Object.keys(state)
 	const storeIn = {}
 	const storeOut = {}
-
+	const stateSnapshot = deepCopy(state)
+	
 	keys.map(key => {
-		const {subscribe, set, update} = writable(state[key])
+		const {subscribe, set} = writable(state[key])
 		// maybe better to use derived store for logging instead this wrapper?
-		const _update = (cb) => {
-			update(value => {
-				const newValue = cb(value)
-				checkType(value, newValue)
-				const stateLog = {
-					old: value,
-					new: newValue,
-				}
-				console.table({[key]: stateLog})
-				state[key] = newValue
-				return newValue
-			})
+		const preSet = (newValue) => {
+			const value = stateSnapshot[key]
+			checkType(value, newValue)
+			logUpdate(value, newValue, key)
+			stateSnapshot[key] = deepCopy(newValue)
+			state[key] = newValue
+			set(newValue)
 		}
-		const _set = newValue => _update(() => newValue)
-		storeIn[key] = {set: _set, update: _update}
+		storeIn[key] = {set: preSet}
 		storeOut[key] = {subscribe}
 	})
-	const getState = () => JSON.parse(JSON.stringify(state))
-	return [storeIn, storeOut, getState]
+	
+	return [storeIn, storeOut, state]
 }
