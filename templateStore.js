@@ -1,4 +1,4 @@
-import { useObservable } from './storeUtils.js'
+import { useStore } from './storeUtils.js'
 
 // State
 function State () {return {
@@ -6,32 +6,34 @@ function State () {return {
 	list: [],
 }}
 
-const [storeIn, storeOut, state] = useObservable(new State)
-console.info('State:', state)
+const [storeIn, storeOut] = useStore(new State, 'template state')
 export const templateStore = storeOut
 
 // Actions
 export function reset () {
-	const state = new State
-	Object.keys(state)
-		.map(key => storeIn[key].set(state[key]))
+	storeIn.set(new State)
 }
 
 export async function demoAction () {
-	const {num, list} = state
-	list.push(num)
-	const numDouble = num * 2
-	const result = await apiCall()
-	if (result) console.info('api returned')
-	storeIn.num.set(numDouble)
-	storeIn.list.set(list)
+	storeIn.update(function demoAction (state) {
+		let {num, list} = state
+		
+		list = [...list]
+		list.push(num)
+		num = num * 2
+		
+		const result = await _apiCall()
+		if (result) console.info('api returned')
+		
+		return {...state, list, num}
+	})
 }
 
-const apiCall = async () => {
-	const prom = new Promise((resolve, reject) => {
+const _apiCall = async () => {
+	const promise = new Promise((resolve, reject) => {
 		window.setTimeout(() => resolve(true), 2000)
 	})
-	const result = await prom
+	const result = await promise
 	return result
 }
 
