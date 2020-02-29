@@ -1,48 +1,42 @@
 import { writable } from 'svelte/store';
 
-const checkType = (value, newValue) => {
+const deepCopy = value => JSON.parse(JSON.stringify(value))
+
+const checkType = (value, newValue, name = '') => {
 	const t1 = typeof value
 	const t2 = typeof newValue
 	if (t1 !== t2){
-		console.warn(`Type warning: Expected ${t1}, got ${t2}`)
+		console.warn(`Type warning: ${name} Expected ${t1}, got ${t2}`)
 	}
 }
 
-let update = {}
-const logUpdate = (value, newValue, key) => {
-	update[key] = {
+const logUpdate = (value, newValue, action) => {
+	const update = {
 		current: value,
 		new: newValue,
 	}
-	setTimeout(() => {
-		if (!Object.keys(update).length) return
-		console.table(update)
-		update = {}
-	},0)
+	console.info(action ? `Action: ${action}` : 'Unknown update')
+	console.table(update)
 }
 
-const deepCopy = (value) => JSON.parse(JSON.stringify(value))
-
-export const useObservable = (state) => {
-	const keys = Object.keys(state)
-	const storeIn = {}
-	const storeOut = {}
-	const stateSnapshot = deepCopy(state)
+export const useObservable = (state, name = 'new state') => {
+	console.info(name, state)
+	const initialState = deepCopy(state) //if devEnv
+	const {subscribe, update, set} = writable(state)
 	
-	keys.map(key => {
-		const {subscribe, set} = writable(state[key])
-		// maybe better to use derived store for logging instead this wrapper?
-		const preSet = (newValue) => {
-			const value = stateSnapshot[key]
-			checkType(value, newValue)
-			logUpdate(value, newValue, key)
-			stateSnapshot[key] = deepCopy(newValue)
-			state[key] = newValue
-			set(newValue)
-		}
-		storeIn[key] = {set: preSet}
-		storeOut[key] = {subscribe}
-	})
+	const interceptUpdate = (callback) => {
+		update(state => {
+			const prevState = deepCopy(state) //if devEnv
+			const newState = callback(state)
+			Object.keys(initialState).map(key => {
+				checkType(initialState[key], newState[key], key)
+			})
+			logUpdate(prevState, newState, callback.name) //if devEnv
+			return {...newState}
+		})
+	}
 	
-	return [storeIn, storeOut, state]
+	const storeIn = {update: interceptUpdate, set}
+	const storeOut = {subscribe}
+	return [storeIn, storeOut]
 }
