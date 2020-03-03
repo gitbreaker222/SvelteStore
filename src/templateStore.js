@@ -1,5 +1,17 @@
 import { useStore } from './storeUtils.js'
 
+/* THE "IMMUTABLE" RULE:
+If you change something (state Object, a list inside state, etc...)
+ => make a shallow copy of it!
+ 
+const { list } = state
+
+const updtedList = [...list]
+updatedList.push(1234) 
+ 
+return {...state, list: updatedList}
+*/
+
 // State
 function State () {return {
 	num: 42,
