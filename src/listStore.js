@@ -14,7 +14,7 @@ function State() {
   };
 }
 
-const [storeIn, storeOut] = useStore(new State(), "list state");
+const [storeIn, storeOut] = useStore(new State(), "listStore");
 export const listStore = storeOut;
 
 // Actions
