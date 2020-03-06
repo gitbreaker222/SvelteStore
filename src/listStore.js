@@ -18,7 +18,7 @@ const [storeIn, storeOut] = useStore(new State(), "listStore");
 export const listStore = storeOut;
 
 // Actions
-export function setCurrent(newItem) {
+export const setCurrent = newItem =>
   storeIn.update(function setCurrent(state) {
     let { pile, item } = state;
 
@@ -30,19 +30,17 @@ export function setCurrent(newItem) {
 
     return { ...state, pile, item };
   });
-}
 
-export function nextItem() {
+export const nextItem = () =>
   storeIn.update(function nextItem(state) {
     let { item, list } = state;
 
     if (list.length) list = [...list];
     item = list.shift() || null;
-    setCurrent(item);
+    state = setCurrent(item);
 
     return { ...state, list };
   });
-}
 
 export function reset() {
   storeIn.set(new State());
