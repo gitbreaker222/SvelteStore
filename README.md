@@ -15,14 +15,16 @@ For detailed insight of changes or the current state , all you need is your brow
 - Show full state in SessionStorage  
   ![full state](./docs/full-state.png)
 
-## One rule
+## Rules
 
-**THE "IMMUTABLE" RULE:** If you change something (state Object, a list inside state, etc...), **make a shallow copy of it!**
+### The "IMMUTABLE" Rule:
+
+If you change something (state Object, a list inside state, etc...), **make a shallow copy of it!**
 
 good:
 
 ```javascript
-const { list } = state;
+let { list } = state;
 
 const updtedList = [...list];
 updatedList.push(1234);
@@ -33,7 +35,7 @@ return { ...state, list: updatedList };
 bad:
 
 ```javascript
-const { list } = state;
+let { list } = state;
 
 // mutated objects won't be detected as a change
 list.push(1234);
@@ -45,11 +47,39 @@ bad:
 
 ```javascript
 //every object will look like a change
-const { list } = deepCopy(state);
+let { list } = deepCopy(state);
 
 list.push(1234);
 
 return { ...state, list };
+```
+
+### The "NESTED ACTIONS" Rule:
+
+If you call an **action inside an action** you must re-assign the return value to state
+
+good:
+
+```javascript
+let { isLightOn } = state;
+
+isLightOn = !isLightOn;
+//if !isLightOn => state.isDoorLocked = true
+state = lockDoor(!isLightOn); //updates state
+
+return { ...state, isLightOn };
+```
+
+bad:
+
+```javascript
+let { isLightOn } = state;
+
+isLightOn = !isLightOn;
+lockDoor(!isLightOn); //forgot state update
+
+//resets isDoorLocked with old state
+return { ...state, isLightOn };
 ```
 
 ## Test locally

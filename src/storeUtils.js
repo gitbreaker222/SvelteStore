@@ -25,7 +25,7 @@ const logUpdate = (state, newState, action, storeName) => {
     before: _state,
     after: _newState
   };
-  console.info(action ? `Action: ${action}` : "Unknown update");
+  console.debug(action ? `Action: ${action}` : "Unknown update");
   console.table(update);
   try {
     sessionStorage.setItem(
@@ -43,14 +43,25 @@ export const useStore = (state, name = "unnamed state") => {
   const { subscribe, update, set } = writable(state);
 
   const interceptUpdate = callback => {
+    let newState;
     update(state => {
-      const newState = callback(state);
-      Object.keys(initialState).map(key => {
-        checkType(initialState[key], newState[key], key);
-      });
-      logUpdate(state, newState, callback.name, name); //if devEnv
-      return { ...newState };
+      newState = callback(state);
+
+      function doTheRest(_state) {
+        Object.keys(initialState).map(key => {
+          checkType(initialState[key], _state[key], key);
+        });
+        logUpdate(state, _state, callback.name, name); //if devEnv
+        return { ..._state };
+      }
+
+      if (newState instanceof Promise) {
+        return newState.then(doTheRest);
+      }
+
+      return doTheRest(newState);
     });
+    return newState;
   };
 
   const storeIn = { update: interceptUpdate, set };

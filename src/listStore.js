@@ -7,8 +7,8 @@ function State() {
     list: [{ id: 1 }, { id: 2 }, { id: 3 }],
     demo1: true,
     demo2: 42,
-    demo3: NaN,
-    demo4: 1337,
+    demo3: "",
+    demo4: 13.37,
     demo5: "lorem ipsum dolor sit amet",
     demoObj: { id: "demo" }
   };
@@ -18,19 +18,29 @@ const [storeIn, storeOut] = useStore(new State(), "listStore");
 export const listStore = storeOut;
 
 // Actions
-export function nextItem() {
-  storeIn.update(function nextItem(state) {
-    let { pile, item, list } = state;
+export const setCurrent = newItem =>
+  storeIn.update(function setCurrent(state) {
+    let { pile, item } = state;
+
     if (item) {
       pile = [...pile];
       pile.push(item);
     }
+    item = newItem;
+
+    return { ...state, pile, item };
+  });
+
+export const nextItem = () =>
+  storeIn.update(function nextItem(state) {
+    let { item, list } = state;
+
     if (list.length) list = [...list];
     item = list.shift() || null;
+    state = setCurrent(item);
 
-    return { ...state, pile, item, list };
+    return { ...state, list };
   });
-}
 
 export function reset() {
   storeIn.set(new State());

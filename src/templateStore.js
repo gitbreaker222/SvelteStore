@@ -28,25 +28,25 @@ export function reset() {
   storeIn.set(new State());
 }
 
-export async function demoAction() {
-  storeIn.update(async function demoAction(state) {
-    let { num, list } = state;
+export const nestedAsyncAction = async () =>
+  storeIn.update(async function nestedAction(state) {
+    let { num } = state;
 
+    const promiseDouble = new Promise(resolve => {
+      window.setTimeout(() => resolve(num * 2), 2000);
+    });
+    num = await promiseDouble;
+
+    return { ...state, num };
+  });
+
+export const demoAction = async () =>
+  storeIn.update(async function demoAction(state) {
+    state = await nestedAsyncAction();
+
+    let { num, list } = state;
     list = [...list];
     list.push(num);
-    num = num * 2;
-
-    const result = await _apiCall();
-    if (result) console.info("api returned");
 
     return { ...state, list, num };
   });
-}
-
-const _apiCall = async () => {
-  const promise = new Promise((resolve, reject) => {
-    window.setTimeout(() => resolve(true), 2000);
-  });
-  const result = await promise;
-  return result;
-};
