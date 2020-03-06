@@ -7,8 +7,8 @@ function State() {
     list: [{ id: 1 }, { id: 2 }, { id: 3 }],
     demo1: true,
     demo2: 42,
-    demo3: NaN,
-    demo4: 1337,
+    demo3: "",
+    demo4: 13.37,
     demo5: "lorem ipsum dolor sit amet",
     demoObj: { id: "demo" }
   };

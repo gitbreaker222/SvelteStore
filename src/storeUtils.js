@@ -25,7 +25,7 @@ const logUpdate = (state, newState, action, storeName) => {
     before: _state,
     after: _newState
   };
-  console.info(action ? `Action: ${action}` : "Unknown update");
+  console.debug(action ? `Action: ${action}` : "Unknown update");
   console.table(update);
   try {
     sessionStorage.setItem(
