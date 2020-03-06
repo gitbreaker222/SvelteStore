@@ -18,17 +18,29 @@ const [storeIn, storeOut] = useStore(new State(), "listStore");
 export const listStore = storeOut;
 
 // Actions
-export function nextItem() {
-  storeIn.update(function nextItem(state) {
-    let { pile, item, list } = state;
+export function setCurrent(newItem) {
+  storeIn.update(function setCurrent(state) {
+    let { pile, item } = state;
+
     if (item) {
       pile = [...pile];
       pile.push(item);
     }
+    item = newItem;
+
+    return { ...state, pile, item };
+  });
+}
+
+export function nextItem() {
+  storeIn.update(function nextItem(state) {
+    let { item, list } = state;
+
     if (list.length) list = [...list];
     item = list.shift() || null;
+    setCurrent(item);
 
-    return { ...state, pile, item, list };
+    return { ...state, list };
   });
 }
 
