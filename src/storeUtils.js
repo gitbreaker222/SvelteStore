@@ -33,7 +33,7 @@ const logUpdate = (state, newState, action, storeName) => {
       JSON.stringify(newState)
     );
   } catch (e) {
-    console.error("sessionStorage needs Same-Origin-Policy to work");
+    console.warn("sessionStorage needs Same-Origin-Policy to work");
   }
 };
 
@@ -41,30 +41,37 @@ export const useStore = (state, name = "unnamed state") => {
   console.info(name, state);
   const initialState = deepCopy(state); //if devEnv
   const { subscribe, update, set } = writable(state);
-
+	let currentState = {...state};
+	
   const interceptUpdate = callback => {
-    let newState;
+		let callbackResult
     update(state => {
-      newState = callback(state);
-
-      function doTheRest(_state) {
+      callbackResult = callback(state);
+			
+      function doTheRest(_state, asyncResolved = false) {
+				//if devEnv
         Object.keys(initialState).map(key => {
           checkType(initialState[key], _state[key], key);
         });
-        logUpdate(state, _state, callback.name, name); //if devEnv
-        return { ..._state };
+				logUpdate(state, _state, callback.name, name);
+				
+				currentState = { ..._state }
+				if (asyncResolved) set(currentState)
+				else return currentState;
       }
 
-      if (newState instanceof Promise) {
-        return newState.then(doTheRest);
+      if (callbackResult instanceof Promise) {
+        callbackResult.then(result => doTheRest(result, true))
+				return currentState
       }
-
-      return doTheRest(newState);
+			return doTheRest(callbackResult)
     });
-    return newState;
+    return callbackResult
   };
+	
+	const get = () => currentState
 
-  const storeIn = { update: interceptUpdate, set };
-  const storeOut = { subscribe };
+  const storeIn = { update: interceptUpdate, set }; //TODO intercept set
+  const storeOut = { subscribe, get };
   return [storeIn, storeOut];
 };

@@ -31,16 +31,20 @@ export const setCurrent = newItem =>
     return { ...state, pile, item };
   });
 
-export const nextItem = () =>
-  storeIn.update(function nextItem(state) {
-    let { item, list } = state;
+export const nextItem = () => {
+	let item
+	
+	storeIn.update(function nextItem(state) {
+    let { list } = state;
 
     if (list.length) list = [...list];
     item = list.shift() || null;
-    state = setCurrent(item);
 
     return { ...state, list };
   });
+	
+	setCurrent(item);
+}
 
 export function reset() {
   storeIn.set(new State());
