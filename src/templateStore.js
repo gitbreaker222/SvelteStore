@@ -1,22 +1,10 @@
 import { useStore } from "./storeUtils.js";
 
-/* THE "IMMUTABLE" RULE:
-If you change something (state Object, a list inside state, etc...)
- => make a shallow copy of it!
- 
-const { list } = state
-
-const updtedList = [...list]
-updatedList.push(1234) 
- 
-return {...state, list: updatedList}
-*/
-
 // State
 function State() {
   return {
-    num: 42,
-    list: []
+    num: 0,
+    numList: []
   };
 }
 
@@ -28,25 +16,49 @@ export function reset() {
   storeIn.set(new State());
 }
 
-export const nestedAsyncAction = async () =>
-  storeIn.update(async function nestedAction(state) {
+export const action = () => 
+	storeIn.update(function action (state) {
+		let { num } = state
+		return { ...state, num: num + 100 }
+	})
+
+// Demo-Actions
+const _defer = value => new Promise(resolve => {
+	window.setTimeout(() => resolve(value), 1000);
+});
+export const asyncAdd1 = async () =>
+  storeIn.update(async function asyncAdd1 (state) {
     let { num } = state;
-
-    const promiseDouble = new Promise(resolve => {
-      window.setTimeout(() => resolve(num * 2), 2000);
-    });
-    num = await promiseDouble;
-
+    num = await _defer(num + 1);
+    return { ...state, num };
+  });
+export const asyncSetNum = async (value) =>
+  storeIn.update(async function asyncSetNum (state) {
+    let num = await _defer(value);
     return { ...state, num };
   });
 
-export const demoAction = async () =>
-  storeIn.update(async function demoAction(state) {
-    state = await nestedAsyncAction();
-
-    let { num, list } = state;
-    list = [...list];
-    list.push(num);
-
-    return { ...state, list, num };
-  });
+export const multiAction = async () => {
+	let state = storeOut.get()
+	
+	function numToList(state) {
+    let { num, numList } = state;
+    numList = [...numList];
+    numList.push(num);
+    return { ...state, numList, num };
+  }
+	
+	await asyncSetNum(state.num + 5)
+	await asyncAdd1()
+	// re-assign updated state when using it
+	state = storeIn.update(numToList);
+	state = await asyncSetNum(state.num + 5)
+	await asyncSetNum(state.num + 5)
+	await asyncAdd1()
+	storeIn.update(numToList);
+}
+/*
+multiAction()
+.then(action)
+.then(multiAction)
+*/
