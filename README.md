@@ -19,7 +19,7 @@ For detailed insight of changes or the current state , all you need is your brow
 
 ### The "IMMUTABLE" Rule:
 
-If you change something (state Object, a list inside state, etc...), **make a shallow copy of it!**
+When your actions change something (state Object, a list inside state, etc...), **make a shallow copy of it!**
 
 good:
 
@@ -54,32 +54,94 @@ list.push(1234);
 return { ...state, list };
 ```
 
-### The "NESTED ACTIONS" Rule:
+### The "PURE UPDATES" Rule:
 
-If you call an **action inside an action** you must re-assign the return value to state
+The callbacks for `storeIn.update` must not have side-effects and return a shallow-copy-state.
+
+Every update modifies state, so if you want to bundle **multiple actions**, they run one by one - not nested:
 
 good:
 
 ```javascript
-let { isLightOn } = state;
+export const multiAction1 = () => {
+  // Simple chain
+  actionA()
+  actionB()
+  return storeIn.update(function actionC (state) {
+    let { xy } = state
+    …
+    return { ...state, xy}
+  });
+}
 
-isLightOn = !isLightOn;
-//if !isLightOn => state.isDoorLocked = true
-state = lockDoor(!isLightOn); //updates state
+export const multiAction2 = () => {
+  // Conditional on current state
+  let state = storeOut.get()
+  let { xy } = state
 
-return { ...state, isLightOn };
+  if (xy) {
+    actionA()
+  } else {
+    storeIn.update(function actionB (state) {
+      let { xy } = state
+      …
+      return { ...state, xy}
+    });
+  }
+  return actionC()
+}
+
+export const multiAction3 = async () => {
+  // Async and with updated state usage
+  let state = storeOut.get()
+  let { xy } = state
+
+  if (xy) await asyncActionA()
+  // re-assign updated state when using it (avoid)
+  state = storeIn.update(function actionB (state) {
+    let { xy } = state
+    xy = await api.fetch(xy)
+    return { ...state, xy}
+  });
+
+  xy = state.xy
+  if (xy) return asyncActionC()
+
+  return state
+}
 ```
 
 bad:
 
 ```javascript
-let { isLightOn } = state;
+export const multiAction1 = () => {
+  // Nested actions are side-effects
+  return storeIn.update(function actionA (state) {
+    let { xy } = state
+    state = actionB() // Don't use functions inside "update"
+    actionC() // ...messes up state easily
+    …
+    return { ...state, xy}
+  });
+}
 
-isLightOn = !isLightOn;
-lockDoor(!isLightOn); //forgot state update
+export const multiAction3 = async () => {
+  // Async and with updated state usage
+  let state = storeOut.get()
+  let { xy } = state
 
-//resets isDoorLocked with old state
-return { ...state, isLightOn };
+  if (xy) await asyncActionA()
+  // re-assign updated state when using it (avoid…)
+  state = storeIn.update(function actionB (state) {
+    let { xy } = state
+    xy = await api.fetch(xy)
+    return { ...state, xy}
+  });
+  // … because xy is now outdated after actionB
+  if (xy) return asyncActionC()
+
+  return state
+}
 ```
 
 ## Test locally
