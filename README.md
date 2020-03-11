@@ -144,6 +144,10 @@ export const multiAction3 = async () => {
 }
 ```
 
+## Anatomy of an action
+
+![Anatomy of an action](./docs/Svelte%20Store%20Action%20Anatomy.png)
+
 ## Test locally
 
 Install the dependencies...
