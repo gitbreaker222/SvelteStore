@@ -2,9 +2,19 @@
 
 Template for client side svelte store _(unofficial)_
 
-![diagram](./docs/Svelte%20Store.png)
+![store internal diagram](./docs/Svelte%20Store.png)
 
 live demo: https://svelte.dev/repl/a76e9e11af784185a39020fec02b7733?version=3.19.1
+
+## Quick start
+
+
+
+## Concept
+
+![architecture concept](./docs/Svelte%20Store%20Architecture%20Concept.png)
+
+Svelte Store aims for *separation of concerns* by covering everything needed to run a client-side application without any UI. Think of it as the CLI to your Web-App.
 
 ## Features
 
