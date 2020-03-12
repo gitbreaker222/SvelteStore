@@ -37,8 +37,10 @@ const logUpdate = (state, newState, action, storeName) => {
   }
 };
 
-export const useStore = (state, name = "unnamed state") => {
+export const useStore = (state, name = "unnamed state", persist = false) => {
   console.info(name, state);
+  const persistName = `STORE_UTILS.${name}`
+  if (persist) state = localStorage.getItem(persistName)
   const initialState = deepCopy(state); //if devEnv
   const { subscribe, update, set } = writable(state);
 	let currentState = {...state};
@@ -56,6 +58,7 @@ export const useStore = (state, name = "unnamed state") => {
 				logUpdate(state, _state, callback.name, name);
 				
 				currentState = { ..._state }
+        if (persist) localStorage.setItem(persistName, JSON.stringify(currentState))
 				if (asyncResolved) set(currentState)
 				else return currentState;
       }
