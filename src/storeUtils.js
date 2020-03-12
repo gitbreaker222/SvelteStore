@@ -48,7 +48,7 @@ export const useStore = (state, name = "unnamed state") => {
     update(state => {
       callbackResult = callback(state);
 			
-      function doTheRest(_state, asyncResolved = false) {
+      function main(_state, asyncResolved = false) {
 				//if devEnv
         Object.keys(initialState).map(key => {
           checkType(initialState[key], _state[key], key);
@@ -61,10 +61,10 @@ export const useStore = (state, name = "unnamed state") => {
       }
 
       if (callbackResult instanceof Promise) {
-        callbackResult.then(result => doTheRest(result, true))
+        callbackResult.then(result => main(result, true))
 				return currentState
       }
-			return doTheRest(callbackResult)
+			return main(callbackResult)
     });
     return callbackResult
   };
