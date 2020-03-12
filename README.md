@@ -8,7 +8,12 @@ live demo: https://svelte.dev/repl/a76e9e11af784185a39020fec02b7733?version=3.19
 
 ## Quick start
 
+```bash
+npm install
+npm run dev
+```
 
+Navigate to [localhost:5000](http://localhost:5000)
 
 ## Concept
 
@@ -158,18 +163,3 @@ export const multiAction3 = async () => {
 
 ![Anatomy of an action](./docs/Svelte%20Store%20Action%20Anatomy.png)
 
-## Test locally
-
-Install the dependencies...
-
-```bash
-npm install
-```
-
-...then start [Rollup](https://rollupjs.org):
-
-```bash
-npm run dev
-```
-
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running.
