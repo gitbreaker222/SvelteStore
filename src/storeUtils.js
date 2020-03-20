@@ -10,6 +10,24 @@ const checkType = (value, newValue, name = "") => {
   }
 };
 
+// setup tickLog
+// https://stackoverflow.com/questions/6343450/generating-sound-on-the-fly-with-javascript-html5#16573282
+const audioCtx = new AudioContext();
+const tickLog = async () => {
+  let osc = audioCtx.createOscillator(); 
+  osc.type = 'sawtooth'; 
+  osc.frequency.value = 5000;
+
+  var vol = audioCtx.createGain();
+  vol.gain.value = 0.1;
+
+  osc.connect(vol);
+  vol.connect(audioCtx.destination);
+
+  osc.start();
+  osc.stop(audioCtx.currentTime + .005);
+}
+
 const logUpdate = (state, newState, action, storeName) => {
   const _state = {};
   const _newState = {};
@@ -27,6 +45,7 @@ const logUpdate = (state, newState, action, storeName) => {
   };
   console.debug(action ? `Action: ${action}` : "Unknown update");
   console.table(update);
+  tickLog()
   try {
     sessionStorage.setItem(
       `svelteStore ${storeName}`,
