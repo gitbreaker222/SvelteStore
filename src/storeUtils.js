@@ -65,7 +65,7 @@ export const useStore = (state, name = "unnamed state", persist = false) => {
   console.info(name, state);
   const persistName = `STORE_UTILS.${name}`
   if (persist) state = localStorage.getItem(persistName)
-  if (settings.devEnv) const initialState = deepCopy(state);
+  const initialState = settings.devEnv ? deepCopy(state) : null;
   const { subscribe, update, set } = writable(state);
 	let currentState = {...state};
 	
