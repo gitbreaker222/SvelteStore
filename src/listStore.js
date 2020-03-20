@@ -43,7 +43,7 @@ export const nextItem = () => {
     return { ...state, list };
   });
 	
-	setCurrent(item);
+  setCurrent(item);
 }
 
 export function reset() {
