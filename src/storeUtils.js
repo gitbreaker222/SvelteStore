@@ -1,5 +1,10 @@
 import { writable } from "svelte/store";
 
+const settings = {
+  devEnv: true,
+  tickLog: true,
+}
+
 const deepCopy = value => JSON.parse(JSON.stringify(value));
 
 const checkType = (value, newValue, name = "") => {
@@ -45,7 +50,7 @@ const logUpdate = (state, newState, action, storeName) => {
   };
   console.debug(action ? `Action: ${action}` : "Unknown update");
   console.table(update);
-  tickLog()
+  if (settings.tickLog) tickLog()
   try {
     sessionStorage.setItem(
       `svelteStore ${storeName}`,
@@ -60,7 +65,7 @@ export const useStore = (state, name = "unnamed state", persist = false) => {
   console.info(name, state);
   const persistName = `STORE_UTILS.${name}`
   if (persist) state = localStorage.getItem(persistName)
-  const initialState = deepCopy(state); //if devEnv
+  if (settings.devEnv) const initialState = deepCopy(state);
   const { subscribe, update, set } = writable(state);
 	let currentState = {...state};
 	
@@ -70,11 +75,12 @@ export const useStore = (state, name = "unnamed state", persist = false) => {
       callbackResult = callback(state);
 			
       function main(_state, asyncResolved = false) {
-				//if devEnv
-        Object.keys(initialState).map(key => {
-          checkType(initialState[key], _state[key], key);
-        });
-				logUpdate(state, _state, callback.name, name);
+			  if (settings.devEnv) {
+          Object.keys(initialState).map(key => {
+            checkType(initialState[key], _state[key], key);
+          });
+          logUpdate(state, _state, callback.name, name);
+        }
 				
 				currentState = { ..._state }
         if (persist) localStorage.setItem(persistName, JSON.stringify(currentState))
