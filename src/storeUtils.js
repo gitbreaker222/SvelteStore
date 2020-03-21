@@ -19,8 +19,8 @@ const checkType = (value, newValue, name = "") => {
 // https://stackoverflow.com/questions/6343450/generating-sound-on-the-fly-with-javascript-html5#16573282
 const audioCtx = new AudioContext();
 const tickLog = async () => {
-  let osc = audioCtx.createOscillator(); 
-  osc.type = 'sawtooth'; 
+  let osc = audioCtx.createOscillator();
+  osc.type = 'sawtooth';
   osc.frequency.value = 5000;
 
   var vol = audioCtx.createGain();
@@ -67,37 +67,37 @@ export const useStore = (state, name = "unnamed state", persist = false) => {
   if (persist) state = localStorage.getItem(persistName)
   const initialState = settings.devEnv ? deepCopy(state) : null;
   const { subscribe, update, set } = writable(state);
-	let currentState = {...state};
-	
+  let currentState = { ...state };
+
   const interceptUpdate = callback => {
-		let callbackResult
+    let callbackResult
     update(state => {
       callbackResult = callback(state);
-			
+
       function main(_state, asyncResolved = false) {
-			  if (settings.devEnv) {
+        if (settings.devEnv) {
           Object.keys(initialState).map(key => {
             checkType(initialState[key], _state[key], key);
           });
           logUpdate(state, _state, callback.name, name);
         }
-				
-				currentState = { ..._state }
+
+        currentState = { ..._state }
         if (persist) localStorage.setItem(persistName, JSON.stringify(currentState))
-				if (asyncResolved) set(currentState)
-				else return currentState;
+        if (asyncResolved) set(currentState)
+        else return currentState;
       }
 
       if (callbackResult instanceof Promise) {
         callbackResult.then(result => main(result, true))
-				return currentState
+        return currentState
       }
-			return main(callbackResult)
+      return main(callbackResult)
     });
     return callbackResult
   };
-	
-	const get = () => currentState
+
+  const get = () => currentState
 
   const storeIn = { update: interceptUpdate, set }; //TODO intercept set
   const storeOut = { subscribe, get };

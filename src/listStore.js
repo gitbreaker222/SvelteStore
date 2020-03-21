@@ -32,9 +32,9 @@ export const setCurrent = newItem =>
   });
 
 export const nextItem = () => {
-	let item
-	
-	storeIn.update(function nextItem(state) {
+  let item
+
+  storeIn.update(function nextItem(state) {
     let { list } = state;
 
     if (list.length) list = [...list];
@@ -42,7 +42,7 @@ export const nextItem = () => {
 
     return { ...state, list };
   });
-	
+
   setCurrent(item);
 }
 
