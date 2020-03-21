@@ -29,6 +29,8 @@ For detailed insight of changes or the current state , all you need is your brow
   ![logs](./docs/logs.png)
 - Show full state in SessionStorage  
   ![full state](./docs/full-state.png)
+- Audible activity
+  - When `storeUtils.js settings.tickLog == true` every action makes a "tick" sound. This way you simply hear, when much is going on
 
 ## Rules
 

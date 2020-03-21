@@ -18,19 +18,20 @@ const checkType = (value, newValue, name = "") => {
 // setup tickLog
 // https://stackoverflow.com/questions/6343450/generating-sound-on-the-fly-with-javascript-html5#16573282
 const audioCtx = new AudioContext();
+
 const tickLog = async () => {
   let osc = audioCtx.createOscillator();
-  osc.type = 'sawtooth';
+  osc.type = 'triangle';
   osc.frequency.value = 5000;
 
   var vol = audioCtx.createGain();
-  vol.gain.value = 0.1;
+  vol.gain.value = 0.05;
 
   osc.connect(vol);
   vol.connect(audioCtx.destination);
 
   osc.start();
-  osc.stop(audioCtx.currentTime + .005);
+  osc.stop(audioCtx.currentTime + .1);
 }
 
 const logUpdate = (state, newState, action, storeName) => {
