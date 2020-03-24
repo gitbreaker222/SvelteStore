@@ -17,6 +17,7 @@ const checkType = (value, newValue, name = "") => {
 
 // setup tickLog
 // https://stackoverflow.com/questions/6343450/generating-sound-on-the-fly-with-javascript-html5#16573282
+// https://marcgg.com/blog/2016/11/01/javascript-audio/
 const audioCtx = new AudioContext()
 
 const tickLog = async () => {
@@ -28,7 +29,7 @@ const tickLog = async () => {
   osc.frequency.value = freq
   
   let vol = audioCtx.createGain()
-  vol.gain.value = 0.1
+  vol.gain.value = 0.05
 
   osc.connect(vol)
   vol.connect(audioCtx.destination)

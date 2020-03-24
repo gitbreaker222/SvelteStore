@@ -25,14 +25,25 @@ Svelte Store aims for *separation of concerns* by covering everything needed to 
 
 For detailed insight of changes or the current state , all you need is your browsers dev-tools. No plugins, zero dependencies _(besides svelte)_.
 
-- Before/After difference on state updates  
+- Before/After difference on state updates
+  - When in dev-mode see what has been changed over time.
   ![logs](./docs/logs.png)
-- Show full state in SessionStorage  
+- Full state in SessionStorage  
+  - See the full state tree when in dev-mode.
   ![full state](./docs/full-state.png)
+- Persist in web-storage
+  - The state can optionally persisted in localStorage by creating a store with the `persist` flag
+  ```js
+  const [storeIn, storeOut] = useStore(new State(), {
+    name: "templateStore",
+    persist: true,
+  })
+  ```
+  - Usefull for a "Settings" store
 - Audible activity
-  - When `storeUtils.js settings.tickLog == true` every action makes a "tick" sound. This way you simply hear, when much is going on
+  - When `settings.tickLog` in `storeUtils.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
 
-## Rules
+## Rules with examples
 
 ### The "IMMUTABLE" Rule:
 
