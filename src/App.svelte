@@ -1,12 +1,16 @@
 <script>
 	import {onDestroy} from 'svelte'
 	import {listStore, nextItem, reset} from './listStore.js'
-	import {templateStore} from './templateStore'
+	import  * as templateStore from './templateStore'
 	import Item from './Item.svelte'
 
 	$: list = $listStore.list
 	$: item = $listStore.item
 	$: pile = $listStore.pile
+
+	window.appStore = {
+		templateStore
+	}
 	
 </script>
 

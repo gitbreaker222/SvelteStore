@@ -2,20 +2,48 @@
 
 Template for client side svelte store _(unofficial)_
 
-![diagram](./docs/Svelte%20Store.png)
+![store internal diagram](./docs/Svelte%20Store.png)
 
 live demo: https://svelte.dev/repl/a76e9e11af784185a39020fec02b7733?version=3.19.1
+
+## Quick start
+
+```bash
+npm install
+npm run dev
+```
+
+Navigate to [localhost:5000](http://localhost:5000)
+
+## Concept
+
+![architecture concept](./docs/Svelte%20Store%20Architecture%20Concept.png)
+
+Svelte Store aims for *separation of concerns* by covering everything needed to run a client-side application without any UI. Think of it as the CLI to your Web-App.
 
 ## Features
 
 For detailed insight of changes or the current state , all you need is your browsers dev-tools. No plugins, zero dependencies _(besides svelte)_.
 
-- Before/After difference on state updates  
+- Before/After difference on state updates
+  - When in dev-mode see what has been changed over time.
   ![logs](./docs/logs.png)
-- Show full state in SessionStorage  
+- Full state in SessionStorage  
+  - See the full state tree when in dev-mode.
   ![full state](./docs/full-state.png)
+- Persist in web-storage
+  - The state can optionally persisted in localStorage by creating a store with the `persist` flag
+  ```js
+  const [storeIn, storeOut] = useStore(new State(), {
+    name: "templateStore",
+    persist: true,
+  })
+  ```
+  - Usefull for a "Settings" store
+- Audible activity
+  - When `settings.tickLog` in `storeUtils.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
 
-## Rules
+## Rules with examples
 
 ### The "IMMUTABLE" Rule:
 
@@ -148,18 +176,3 @@ export const multiAction3 = async () => {
 
 ![Anatomy of an action](./docs/Svelte%20Store%20Action%20Anatomy.png)
 
-## Test locally
-
-Install the dependencies...
-
-```bash
-npm install
-```
-
-...then start [Rollup](https://rollupjs.org):
-
-```bash
-npm run dev
-```
-
-Navigate to [localhost:5000](http://localhost:5000). You should see your app running.

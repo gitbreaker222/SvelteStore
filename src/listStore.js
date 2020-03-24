@@ -1,4 +1,4 @@
-import { useStore } from "./storeUtils.js";
+import { useStore } from "./storeUtils.js"
 
 function State() {
   return {
@@ -11,41 +11,41 @@ function State() {
     demo4: 13.37,
     demo5: "lorem ipsum dolor sit amet",
     demoObj: { id: "demo" }
-  };
+  }
 }
 
-const [storeIn, storeOut] = useStore(new State(), "listStore");
-export const listStore = storeOut;
+const [storeIn, storeOut] = useStore(new State(), {name: "listStore"})
+export const listStore = storeOut
 
 // Actions
 export const setCurrent = newItem =>
   storeIn.update(function setCurrent(state) {
-    let { pile, item } = state;
+    let { pile, item } = state
 
     if (item) {
-      pile = [...pile];
-      pile.push(item);
+      pile = [...pile]
+      pile.push(item)
     }
-    item = newItem;
+    item = newItem
 
-    return { ...state, pile, item };
-  });
+    return { ...state, pile, item }
+  })
 
 export const nextItem = () => {
-	let item
-	
-	storeIn.update(function nextItem(state) {
-    let { list } = state;
+  let item
 
-    if (list.length) list = [...list];
-    item = list.shift() || null;
+  storeIn.update(function nextItem(state) {
+    let { list } = state
 
-    return { ...state, list };
-  });
-	
-	setCurrent(item);
+    if (list.length) list = [...list]
+    item = list.shift() || null
+
+    return { ...state, list }
+  })
+
+  setCurrent(item)
 }
 
 export function reset() {
-  storeIn.set(new State());
+  storeIn.set(new State())
 }
