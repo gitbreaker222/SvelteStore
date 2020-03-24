@@ -14,7 +14,7 @@ function State() {
   }
 }
 
-const [storeIn, storeOut] = useStore(new State(), "listStore")
+const [storeIn, storeOut] = useStore(new State(), {name: "listStore"})
 export const listStore = storeOut
 
 // Actions

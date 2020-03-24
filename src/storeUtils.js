@@ -72,7 +72,11 @@ const persistWrite = (name, state) => (
   localStorage.setItem(name, JSON.stringify(state))
 )
 
-export const useStore = (state, name = "unnamed state", persist = false) => {
+export const useStore = (state, opts) => {
+  const {
+    name = "unnamed state",
+    persist = false,
+  } = opts
   const persistName = `STORE_UTILS.${name}`
   if (persist) {
     const persistedState = persistRead(persistName)    
