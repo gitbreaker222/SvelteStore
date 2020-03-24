@@ -65,10 +65,21 @@ const logUpdate = (state, newState, action, storeName) => {
   }
 }
 
+const persistRead = (name) => (
+  JSON.parse(localStorage.getItem(name))
+)
+const persistWrite = (name, state) => (
+  localStorage.setItem(name, JSON.stringify(state))
+)
+
 export const useStore = (state, name = "unnamed state", persist = false) => {
-  console.info(name, state)
   const persistName = `STORE_UTILS.${name}`
-  if (persist) state = localStorage.getItem(persistName)
+  if (persist) {
+    const persistedState = persistRead(persistName)    
+    if (persistedState) state = persistedState
+    else persistWrite(persistName, state)
+  }
+  console.info(name, state)
   const initialState = settings.devEnv ? deepCopy(state) : null
   const { subscribe, update, set } = writable(state)
   let currentState = { ...state }
@@ -87,7 +98,7 @@ export const useStore = (state, name = "unnamed state", persist = false) => {
         }
 
         currentState = { ..._state }
-        if (persist) localStorage.setItem(persistName, JSON.stringify(currentState))
+        if (persist) persistWrite(persistName, currentState)
         if (asyncResolved) set(currentState)
         else return currentState
       }
@@ -101,9 +112,13 @@ export const useStore = (state, name = "unnamed state", persist = false) => {
     return callbackResult
   }
 
+  const interceptSet = (newState) => {
+    interceptUpdate(() => newState)
+  }
+
   const get = () => currentState
 
-  const storeIn = { update: interceptUpdate, set } //TODO intercept set
+  const storeIn = { update: interceptUpdate, set: interceptSet }
   const storeOut = { subscribe, get }
   return [storeIn, storeOut]
 }

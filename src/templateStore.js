@@ -8,7 +8,7 @@ function State() {
   }
 }
 
-const [storeIn, storeOut] = useStore(new State(), "templateStore")
+const [storeIn, storeOut] = useStore(new State(), "templateStore", true)
 export const templateStore = storeOut
 
 // Actions
