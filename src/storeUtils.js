@@ -7,6 +7,19 @@ const settings = {
 
 const deepCopy = value => JSON.parse(JSON.stringify(value))
 
+const checkSpelling = (state, _state) => {
+	const correctKeys = Object.keys(state)
+	const _keys = Object.keys(_state).every(key => {
+		const match = correctKeys.indexOf(key) >= 0 
+		if (!match) {
+			console.debug(correctKeys)
+			console.warn(`[SvelteStore] Spelling seems incorrect for "${key}"
+(Check debug logs for available keys)`)
+		}
+		return match
+	})
+}
+
 const checkType = (value, newValue, name = "") => {
   const t1 = typeof value
   const t2 = typeof newValue
@@ -96,6 +109,7 @@ export const useStore = (state, opts) => {
 
       function main(_state, asyncResolved = false) {
         if (settings.devEnv) {
+					checkSpelling(initialState, _state)
           Object.keys(initialState).map(key => {
             checkType(initialState[key], _state[key], key)
           })
