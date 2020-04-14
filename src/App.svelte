@@ -1,7 +1,7 @@
 <script>
 	import {onDestroy} from 'svelte'
-	import {listStore, nextItem, reset} from './listStore.js'
-	import  * as templateStore from './templateStore'
+	import {listStore, nextItem, reset} from './store/listStore.js'
+	import  * as templateStore from './store/templateStore'
 	import Item from './Item.svelte'
 
 	$: list = $listStore.list
