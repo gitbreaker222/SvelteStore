@@ -8,16 +8,16 @@ const settings = {
 const deepCopy = value => JSON.parse(JSON.stringify(value))
 
 const checkSpelling = (state, _state) => {
-	const correctKeys = Object.keys(state)
-	const _keys = Object.keys(_state).every(key => {
-		const match = correctKeys.indexOf(key) >= 0 
-		if (!match) {
-			console.debug(correctKeys)
-			console.warn(`[SvelteStore] Spelling seems incorrect for "${key}"
+  const correctKeys = Object.keys(state)
+  Object.keys(_state).every(key => {
+    const match = correctKeys.indexOf(key) >= 0
+    if (!match) {
+      console.debug(correctKeys)
+      console.warn(`[SvelteStore] Spelling seems incorrect for "${key}"
 (Check debug logs for available keys)`)
-		}
-		return match
-	})
+    }
+    return match
+  })
 }
 
 const checkType = (value, newValue, name = "") => {
@@ -37,10 +37,10 @@ const tickLog = async () => {
   const duration = .1
   const freq = 1 / duration
 
-  let osc = audioCtx.createOscillator() 
+  let osc = audioCtx.createOscillator()
   osc.type = "sawtooth"
   osc.frequency.value = freq
-  
+
   let vol = audioCtx.createGain()
   vol.gain.value = 0.05
 
@@ -93,7 +93,7 @@ export const useStore = (state, opts) => {
   } = opts
   const persistName = `STORE_UTILS.${name}`
   if (persist) {
-    const persistedState = persistRead(persistName)    
+    const persistedState = persistRead(persistName)
     if (persistedState) state = persistedState
     else persistWrite(persistName, state)
   }
@@ -109,7 +109,7 @@ export const useStore = (state, opts) => {
 
       function main(_state, asyncResolved = false) {
         if (settings.devEnv) {
-					checkSpelling(initialState, _state)
+          checkSpelling(initialState, _state)
           Object.keys(initialState).map(key => {
             checkType(initialState[key], _state[key], key)
           })

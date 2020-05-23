@@ -1,4 +1,4 @@
-import { useStore } from "./storeUtils.js"
+import { useStore } from "./_svelteStore.js"
 
 // State
 function State() {
@@ -19,12 +19,14 @@ export function reset() {
   storeIn.set(new State())
 }
 
-export const action = () =>
+export const action = () => {
   storeIn.update(function action(state) {
     let { num } = state
     return { ...state, num: num + 100 }
   })
+}
 
+//=== Everything below this line can be safely deleted ===
 // Demo-Actions
 const _defer = value => new Promise(resolve => {
   window.setTimeout(() => resolve(value), 1000)

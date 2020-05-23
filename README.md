@@ -15,6 +15,15 @@ npm run dev
 
 Navigate to [localhost:5000](http://localhost:5000)
 
+## Usage
+
+- Copy `src/store/_svelteStore.js` in your project
+- Create a new file `myStore.js` based on `src/store/templateStore.js` next to `_svelteStore.js`
+- In `templateStore.js` replace all "templateStore" with "myStore"
+- Delete everything below "Demo-Actions"
+- Define initial state in `State` as simple JSON
+- Write actions that call `storeIn.update(updater)` and use a _named function_ as updater
+
 ## Concept
 
 ![architecture concept](./docs/Svelte%20Store%20Architecture%20Concept.png)

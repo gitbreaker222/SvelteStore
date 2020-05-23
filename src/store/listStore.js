@@ -1,4 +1,4 @@
-import { useStore } from "./storeUtils.js"
+import { useStore } from "./_svelteStore.js"
 
 function State() {
   return {
@@ -14,7 +14,7 @@ function State() {
   }
 }
 
-const [storeIn, storeOut] = useStore(new State(), {name: "listStore"})
+const [storeIn, storeOut] = useStore(new State(), { name: "listStore" })
 export const listStore = storeOut
 
 // Actions
