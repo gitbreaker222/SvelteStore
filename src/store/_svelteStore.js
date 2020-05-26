@@ -1,9 +1,20 @@
 import { writable } from "svelte/store"
 
 const settings = {
-  devEnv: true,
+  devEnv: true, // TODO get from build parameter
   tickLog: true,
 }
+
+const logPrefix = [
+  '%cSvelteStore',
+  [
+    `background: #ff3e00`,
+    `border-radius: 0.5em`,
+    `color: white`,
+    `font-weight: bold`,
+    `padding: 2px 0.5em`,
+  ].join(';')
+]
 
 const deepCopy = value => JSON.parse(JSON.stringify(value))
 
@@ -12,9 +23,9 @@ const checkSpelling = (state, _state) => {
   Object.keys(_state).every(key => {
     const match = correctKeys.indexOf(key) >= 0
     if (!match) {
-      console.debug(correctKeys)
-      console.warn(`[SvelteStore] Spelling seems incorrect for "${key}"
+      console.warn(...logPrefix, `Spelling seems incorrect for "${key}"
 (Check debug logs for available keys)`)
+      console.debug(correctKeys)
     }
     return match
   })
@@ -24,7 +35,7 @@ const checkType = (value, newValue, name = "") => {
   const t1 = typeof value
   const t2 = typeof newValue
   if (t1 !== t2) {
-    console.warn(`Type warning: ${name} Expected ${t1}, got ${t2}`)
+    console.warn(...logPrefix, `Type warning '${name}': Expected ${t1}, got ${t2}`)
   }
 }
 
@@ -66,8 +77,13 @@ const logUpdate = (state, newState, action, storeName) => {
     before: _state,
     after: _newState
   }
-  console.debug(action ? `Action: ${action}` : "Unknown update")
+
+  console.log(...logPrefix, 'State changed')
+  console.groupCollapsed(
+    `${action || 'Unnamed action'}`
+  )
   console.table(update)
+  console.groupEnd()
   if (settings.tickLog) tickLog()
   try {
     sessionStorage.setItem(
@@ -75,7 +91,7 @@ const logUpdate = (state, newState, action, storeName) => {
       JSON.stringify(newState)
     )
   } catch (e) {
-    console.warn("sessionStorage needs Same-Origin-Policy to work")
+    console.warn(...logPrefix, "sessionStorage needs Same-Origin-Policy to work")
   }
 }
 
@@ -97,7 +113,7 @@ export const useStore = (state, opts) => {
     if (persistedState) state = persistedState
     else persistWrite(persistName, state)
   }
-  console.info(name, state)
+  console.info(...logPrefix, name, state)
   const initialState = settings.devEnv ? deepCopy(state) : null
   const { subscribe, update, set } = writable(state)
   let currentState = { ...state }
