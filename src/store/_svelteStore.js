@@ -118,7 +118,7 @@ export const useStore = (state, opts) => {
   const { subscribe, update, set } = writable(state)
   let currentState = { ...state }
 
-  const interceptUpdate = callback => {
+  const interceptUpdate = (actionName, callback) => {
     let callbackResult
     update(state => {
       callbackResult = callback(state)
@@ -129,7 +129,7 @@ export const useStore = (state, opts) => {
           Object.keys(initialState).map(key => {
             checkType(initialState[key], _state[key], key)
           })
-          logUpdate(state, _state, callback.name, name)
+          logUpdate(state, _state, actionName, name)
         }
 
         currentState = { ..._state }
@@ -147,8 +147,8 @@ export const useStore = (state, opts) => {
     return callbackResult
   }
 
-  const interceptSet = (newState) => {
-    interceptUpdate(() => newState)
+  const interceptSet = (actionName, newState) => {
+    interceptUpdate(actionName, () => newState)
   }
 
   const get = () => currentState

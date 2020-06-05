@@ -18,8 +18,12 @@ const [storeIn, storeOut] = useStore(new State(), { name: "listStore" })
 export const listStore = storeOut
 
 // Actions
-export const setCurrent = newItem =>
-  storeIn.update(function setCurrent(state) {
+export function reset() {
+  storeIn.set('reset', new State())
+}
+
+export const setCurrent = newItem => {
+  return storeIn.update('setCurrent', state => {
     let { pile, item } = state
 
     if (item) {
@@ -30,11 +34,12 @@ export const setCurrent = newItem =>
 
     return { ...state, pile, item }
   })
+}
 
 export const nextItem = () => {
   let item
 
-  storeIn.update(function nextItem(state) {
+  storeIn.update('nextItem', state => {
     let { list } = state
 
     if (list.length) list = [...list]
@@ -43,9 +48,5 @@ export const nextItem = () => {
     return { ...state, list }
   })
 
-  setCurrent(item)
-}
-
-export function reset() {
-  storeIn.set(new State())
+  return setCurrent(item)
 }
