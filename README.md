@@ -22,7 +22,7 @@ Navigate to [localhost:5000](http://localhost:5000)
 - In `templateStore.js` replace all "templateStore" with "myStore"
 - Delete everything below "Demo-Actions"
 - Define initial state in `State` as simple JSON
-- Write actions that call `storeIn.update(updater)` and use a _named function_ as updater
+- Write actions that call `storeIn.update(actionName, updaterFn)`
 
 ## Concept
 
@@ -32,29 +32,38 @@ Svelte Store aims for *separation of concerns* by covering everything needed to 
 
 ## Features
 
-For detailed insight of changes or the current state , all you need is your browsers dev-tools. No plugins, zero dependencies _(besides svelte)_.
+For detailed insight of *changes* or the *current state* , all you need is your browsers dev-tools. No plugins, zero dependencies _(besides svelte)_.
 
-- Before/After difference on state updates
-  - When in dev-mode see what has been changed over time.
-  ![logs](./docs/logs.png)
-- Full state in SessionStorage  
-  - See the full state tree when in dev-mode.
-  ![full state](./docs/full-state.png)
-- Persist in web-storage
-  - The state can optionally persisted in localStorage by creating a store with the `persist` flag
-  ```js
-  const [storeIn, storeOut] = useStore(new State(), {
-    name: "templateStore",
-    persist: true,
-  })
-  ```
-  - Usefull for a "Settings" store
+- Track state diffs
+- Inspect current state
+- Persistent storage with a singe switch
+
+### Before/After diffs on state updates:
+
+(TODO: When in dev-mode) See what has been changed over time.
+![logs](./docs/logs.png)
+
+### Full state in SessionStorage
+
+See the full state tree (TODO: when in dev-mode)
+![full state](./docs/full-state.png)
+
+### Persist in web-storage
+
+The state can optionally persisted in localStorage by creating a store with the `persist` flag
+```js
+const [storeIn, storeOut] = useStore(new State(), {
+  name: "templateStore",
+  persist: true,
+})
+```
+
 - Audible activity
   - When `settings.tickLog` in `storeUtils.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
 
 ## Rules with examples
 
-### The "IMMUTABLE" Rule:
+### #1 - IMMUTABLE:
 
 When your actions change something (state Object, a list inside state, etc...), **make a shallow copy of it!**
 
@@ -63,13 +72,13 @@ good:
 ```javascript
 let { list } = state;
 
-const updtedList = [...list];
-updatedList.push(1234);
+list = [...list]; // shallow copy with spread syntax
+list.push(1234);
 
-return { ...state, list: updatedList };
+return { ...state, list };
 ```
 
-bad:
+bad: *mutation*
 
 ```javascript
 let { list } = state;
@@ -80,31 +89,32 @@ list.push(1234);
 return Object.assign(state, { list });
 ```
 
-bad:
+bad: *deep copy*
 
 ```javascript
-//every object will look like a change
 let { list } = deepCopy(state);
+// EVERY object will look like a change
+// Svelte must re-render everything instead just "list"
 
 list.push(1234);
 
 return { ...state, list };
 ```
 
-### The "PURE UPDATES" Rule:
+### #2 - PURE UPDATES:
 
 The callbacks for `storeIn.update` must not have side-effects and return a shallow-copy-state.
 
-Every update modifies state, so if you want to bundle **multiple actions**, they run one by one - not nested:
+Every update modifies state, so if you want to bundle **multiple actions**, run them one by one - not nested:
 
 good:
 
 ```javascript
 export const multiAction1 = () => {
-  // Simple chain
   actionA()
   actionB()
-  return storeIn.update(function actionC (state) {
+  // Return last update
+  return storeIn.update('actionC', function (state) {
     let { xy } = state
     …
     return { ...state, xy}
@@ -112,36 +122,39 @@ export const multiAction1 = () => {
 }
 
 export const multiAction2 = () => {
-  // Conditional on current state
   let state = storeOut.get()
   let { xy } = state
 
+  // A or B depending on current state
   if (xy) {
     actionA()
   } else {
-    storeIn.update(function actionB (state) {
+    storeIn.update('actionB', function (state) {
       let { xy } = state
       …
       return { ...state, xy}
     });
   }
+  // Return last update
   return actionC()
 }
 
 export const multiAction3 = async () => {
-  // Async and with updated state usage
+  // Follow the state of "xy"
   let state = storeOut.get()
-  let { xy } = state
+  let { xy } = state // xy = true
 
   if (xy) await asyncActionA()
-  // re-assign updated state when using it (avoid)
-  state = storeIn.update(function actionB (state) {
+
+  // Re-assign updated state when using it
+  // Beware that this practise may leads to bugs (see bad multiAction3 below)
+  state = storeIn.update('actionB', function (state) {
     let { xy } = state
-    xy = await api.fetch(xy)
+    xy = await api.fetch(xy) // xy = false
     return { ...state, xy}
   });
 
-  xy = state.xy
+  xy = state.xy // xy = false (!! don't forget to re-assign)
   if (xy) return asyncActionC()
 
   return state
@@ -153,29 +166,31 @@ bad:
 ```javascript
 export const multiAction1 = () => {
   // Nested actions are side-effects
-  return storeIn.update(function actionA (state) {
+  return storeIn.update('actionA', function (state) {
     let { xy } = state
-    state = actionB() // Don't use functions inside "update"
-    actionC() // ...messes up state easily
+    state = actionB() //! Don't call functions inside "update"
+    actionC() // ...messes up state easily; not pure
     …
     return { ...state, xy}
   });
 }
 
 export const multiAction3 = async () => {
-  // Async and with updated state usage
+  // Follow the state of "xy"
   let state = storeOut.get()
-  let { xy } = state
+  let { xy } = state // xy = true
 
   if (xy) await asyncActionA()
-  // re-assign updated state when using it (avoid…)
-  state = storeIn.update(function actionB (state) {
+  
+  state = storeIn.update('actionB', function (state) {
     let { xy } = state
-    xy = await api.fetch(xy)
+    xy = await api.fetch(xy) // xy = false
     return { ...state, xy}
   });
-  // … because xy is now outdated after actionB
-  if (xy) return asyncActionC()
+
+  // xy is still what it was before actionB. 
+  // (See good: multiAction3 above)
+  if (xy) return asyncActionC() // xy = true (expected false)
 
   return state
 }
