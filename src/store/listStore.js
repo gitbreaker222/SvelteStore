@@ -19,7 +19,7 @@ export const listStore = storeOut
 
 // Actions
 export function reset() {
-  storeIn.set('reset', new State())
+  return storeIn.set('reset', new State())
 }
 
 export const setCurrent = newItem => {
