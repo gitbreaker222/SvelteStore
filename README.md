@@ -37,6 +37,8 @@ For detailed insight of *changes* or the *current state* , all you need is your 
 - Track state diffs
 - Inspect current state
 - Persistent storage with a singe switch
+- Infinite loop detection
+- Audible activity
 
 ### Before/After diffs on state updates:
 
@@ -46,6 +48,7 @@ For detailed insight of *changes* or the *current state* , all you need is your 
 ### Full state in SessionStorage
 
 See the full state tree (TODO: when in dev-mode)
+
 ![full state](./docs/full-state.png)
 
 ### Persist in web-storage
@@ -57,9 +60,20 @@ const [storeIn, storeOut] = useStore(new State(), {
   persist: true,
 })
 ```
+### Infinite loop detection
 
-- Audible activity
-  - When `settings.tickLog` in `storeUtils.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
+SvelteStore can break unwanted endless circles of action calls after about 3 seconds, if an action gets called with an interval of &lt; 150 ms.
+
+This feature can be turned of in `_svelteStore.js` with `settings.loopGuard: false`.
+
+![confirm dialog asking to reload when action is called infinitely](./docs/infinite%20loop%20detection.png)
+[screen recording of stopping infinite loops with a confirm dialog about reloading the window](./docs/infinite%20loop%20detection.webm)
+
+If the users confirms the reload, the window is asked to reload and an error is thrown, to break e.g. `for` loops. If the dialog is canceled, the action gets flagged and ignored for 150 ms
+
+### Audible activity
+
+When `settings.tickLog` in `storeUtils.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
 
 ## Rules with examples
 
