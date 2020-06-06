@@ -140,11 +140,15 @@ const loopGuard = {
       expirationTime = blockFlag
 
       console.error(...logPrefix, 'Infinite loop detected:', action)
-      throw new Error(`
-      Action has been called repeatedly
-      with an interval of less than ${repeatDelay} ms
-      and within a max time frame of ${totalDelay} ms
+      const isConfirmed = confirm(`The action "${action}" seems to repeat infinitley.
+      Do you want to reload the window?
       `)
+      if (isConfirmed) {
+        window.location.reload()
+        const msg = `
+Action has been called repeatedly with an interval of less than ${repeatDelay} ms and within a max time frame of ${totalDelay} ms`
+        throw new Error(msg)
+      }
     }
     this.index.set(action, expirationTime)
     forgetAfter(repeatDelay, expirationTime)
@@ -173,7 +177,7 @@ export const useStore = (state, opts) => {
     let callbackResult
 
     update(state => {
-      if (settings.loopGuard) loopGuard.register(actionName)
+      if (settings.loopGuard && loopGuard.register(actionName)) return state
 
       callbackResult = callback(state)
 
