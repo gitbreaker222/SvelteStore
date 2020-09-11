@@ -162,7 +162,7 @@ export const useStore = (state, opts) => {
     name = "unnamed state",
     persist = false,
   } = opts
-  const persistName = `STORE_UTILS.${name}`
+  const persistName = `svelteStore.${name}`
   if (persist) {
     const persistedState = persistRead(persistName)
     if (persistedState) state = persistedState
