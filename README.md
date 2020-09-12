@@ -13,7 +13,7 @@ npm install
 npm run dev
 ```
 
-Navigate to [localhost:5000](http://localhost:5000)
+Navigate to [localhost:5000](http://localhost:5000) and open dev-tools.
 
 ## Usage
 
@@ -75,7 +75,11 @@ If the users confirms the reload, the window is asked to reload and an error is 
 
 When `settings.tickLog` in `storeUtils.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
 
-## Rules with examples
+### Environments: Dev / Prod
+
+No debugging-functions in production, to improve performance. In `_svelteStore.js` with `settings.isDev: false` all activity logs can be turned off. This is automatically toggled with the rollup configuration: On with `npm run dev` - off with `npm run build` and `npm start`.
+
+## Two Rules
 
 ### #1 - IMMUTABLE:
 
