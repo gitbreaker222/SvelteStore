@@ -1,7 +1,7 @@
 import { writable } from "svelte/store"
 
 const settings = {
-  devEnv: true, // DEBUG FEATURE
+  isProd: __process.env.isProd,
   tickLog: true, // DEBUG FEATURE
   loopGuard: true,
 }
@@ -171,7 +171,7 @@ export const useStore = (state, opts) => {
     else persistWrite(persistName, state)
   }
   console.info(...logPrefix, name, state)
-  const initialState = settings.devEnv ? deepCopy(state) : null // DEBUG FEATURE
+  const initialState = !settings.isProd ? deepCopy(state) : null // DEBUG FEATURE
   const { subscribe, update, set } = writable(state)
   let currentState = { ...state }
 
@@ -185,7 +185,7 @@ export const useStore = (state, opts) => {
 
       function main(_state, asyncResolved = false) {
         /* DEBUG FEATURE ===================== */
-        if (settings.devEnv) {
+        if (!settings.isProd) {
           checkSpelling(initialState, _state)
           Object.keys(initialState).map(key => {
             checkType(initialState[key], _state[key], key)
