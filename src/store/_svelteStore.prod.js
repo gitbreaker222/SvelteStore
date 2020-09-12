@@ -1,17 +1,17 @@
 import { writable } from "svelte/store"
 
 const settings = {
-  loopGuard: true,
+  isLoopGuard: true,
 }
 
 const logPrefix = [
   '%cSvelteStore',
   [
-    `background: #ff3e00`,
-    `border-radius: 0.5em`,
-    `color: white`,
-    `font-weight: bold`,
-    `padding: 2px 0.5em`,
+    'background: #ff3e00',
+    'border-radius: 0.5em',
+    'color: white',
+    'font-weight: bold',
+    'padding: 2px 0.5em',
   ].join(';')
 ]
 
@@ -87,7 +87,6 @@ export const useStore = (state, opts) => {
     if (persistedState) state = persistedState
     else persistWrite(persistName, state)
   }
-  console.info(...logPrefix, name, state)
   const { subscribe, update, set } = writable(state)
   let currentState = { ...state }
 
@@ -95,7 +94,7 @@ export const useStore = (state, opts) => {
     let callbackResult
 
     update(state => {
-      if (settings.loopGuard && loopGuard.register(actionName)) return state
+      if (settings.isLoopGuard && loopGuard.register(actionName)) return state
 
       callbackResult = callback(state)
 
