@@ -9,7 +9,7 @@
 	$: item = $listStore.item
 	$: pile = $listStore.pile
 
-	window.appStore = {
+	window.appCli = {
 		templateStore
 	}
 	
