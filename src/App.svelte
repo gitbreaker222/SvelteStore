@@ -1,3 +1,4 @@
+<svelte:options immutable />
 <script>
 	import {onDestroy} from 'svelte'
 	import {listStore, nextItem, reset} from './store/listStore.js'
@@ -26,7 +27,7 @@
 	{/each}
 </ul>
 
-<h1>current item: {JSON.stringify(item)}</h1> 
+<h1>current item: {#if item}<Item {item}/>{/if}</h1> 
 
 <h1>pile</h1>
 <ul>
