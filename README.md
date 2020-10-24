@@ -42,12 +42,12 @@ For detailed insight of *changes* or the *current state* , all you need is your 
 
 ### Before/After diffs on state updates:
 
-(TODO: When in dev-mode) See what has been changed over time.
+See what has been changed over time.
 ![logs](./docs/logs.png)
 
 ### Full state in SessionStorage
 
-See the full state tree (TODO: when in dev-mode)
+See the full state tree
 
 ![full state](./docs/full-state.png)
 

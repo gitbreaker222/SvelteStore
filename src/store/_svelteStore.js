@@ -80,7 +80,7 @@ const logUpdate = (state, newState, action, storeName) => {
     after: _newState
   }
 
-  console.log(...logPrefix, 'State changed')
+  console.log(...logPrefix, `${storeName} changed`)
   console.groupCollapsed(
     `${action || 'Unnamed action'}`
   )
