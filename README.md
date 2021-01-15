@@ -34,52 +34,58 @@ Svelte Store aims for *separation of concerns* by covering everything needed to 
 
 For detailed insight of *changes* or the *current state* , all you need is your browsers dev-tools. No plugins, zero dependencies _(besides svelte)_.
 
-- Track state diffs
-- Inspect current state
-- Persistent storage with a singe switch
-- Infinite loop detection
-- Audible activity
+- ↔️ Track state diffs
+- 🔍 Inspect current state
+- 📌 Persistent storage with a singe switch
+- ♾️ Infinite loop detection
+- 📖 Audible activity
 
-### Before/After diffs on state updates:
+### ↔️ Before/After diffs on state updates:
 
-See what has been changed over time.
+See what has been changed over time. *This is a debugging feature and deactivated in prod-mode.*
+
 ![logs](./docs/logs.png)
 
-### Full state in SessionStorage
+### 🔍 Full state in SessionStorage
 
-See the full state tree
+See the full state tree to understand the current state behind the GUI. *This is a debugging feature and deactivated in prod-mode.*
 
 ![full state](./docs/full-state.png)
 
-### Persist in web-storage
+### 📌 Persist in web-storage
 
-The state can optionally persisted in localStorage by creating a store with the `persist` flag
+The state can optionally persisted in localStorage by creating a store with the `persist` flag. Useful for data, that should be rememberd after a page reload or across tabs.
 ```js
 const [storeIn, storeOut] = useStore(new State(), {
   name: "templateStore",
   persist: true,
 })
 ```
-### Infinite loop detection
+### ♾️ Infinite loop detection
 
 SvelteStore can break unwanted endless circles of action calls after about 3 seconds, if an action gets called with an interval of &lt; 150 ms.
 
-This feature can be turned off in `_svelteStore.js` with `settings.loopGuard: false`.
+This feature can be turned off in `_svelteStore.js` with `settings.loopGuard: false`. It is available in prod-mode and active by default.
 
-![confirm dialog asking to reload when action is called infinitely](./docs/infinite%20loop%20detection.png)
+![confirm dialog asking to reload when action is called infinitely](./docs/infinite%20loop%20detection.png)  
 [screen recording of stopping infinite loops with a confirm dialog about reloading the window](./docs/infinite%20loop%20detection.webm)
 
 If the users confirms the reload, the window is asked to reload and an error is thrown, to break e.g. `for` loops. If the dialog is canceled, the action gets ignored for 150 ms, so a long task may finish.
 
 ### Audible activity
 
-When `settings.tickLog` in `storeUtils.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
+When `settings.tickLog` in `_svelteStore.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when (too) much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
 
 ### Environments: Dev / Prod
 
 No debugging-functions in production, to improve performance. In `_svelteStore.js` with `settings.isDev: false` all activity logs can be turned off. This is automatically toggled with the rollup configuration: On with `npm run dev` - off with `npm run build` and `npm start`.
 
-## Two Rules
+In `_svelteStore.prod.js` all debugging functions have been removed to reduce file-size
+
+## Two Rules 📖
+
+1. IMMUTABLE
+1. PURE UPDATES
 
 ### #1 - IMMUTABLE:
 
