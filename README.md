@@ -36,9 +36,10 @@ For detailed insight of *changes* or the *current state* , all you need is your 
 
 - ↔️ Track state diffs
 - 🔍 Inspect current state
+- ⚠️ Type warnings
 - 📌 Persistent storage with a singe switch
 - ♾️ Infinite loop detection
-- 📖 Audible activity
+- 🔉 Audible activity
 
 ### ↔️ Before/After diffs on state updates:
 
@@ -51,6 +52,14 @@ See what has been changed over time. *This is a debugging feature and deactivate
 See the full state tree to understand the current state behind the GUI. *This is a debugging feature and deactivated in prod-mode.*
 
 ![full state](./docs/full-state.png)
+
+### ⚠️ Automatic type warnings on state updates:
+
+The initial `State` of a SvelteStore also acts as type definition for the top level fields. If an action updates a field with another type, a warning will be shown in dev-tools console. No replacement for TypeScript, but free basic type checks. *This is a debugging feature and deactivated in prod-mode.*
+
+![type warning](./docs/type%20warning.png)
+
+Learn more about native JS types at [Mozilla Developer Network: typeof](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#description)
 
 ### 📌 Persist in web-storage
 
@@ -72,7 +81,7 @@ This feature can be turned off in `_svelteStore.js` with `settings.loopGuard: fa
 
 If the users confirms the reload, the window is asked to reload and an error is thrown, to break e.g. `for` loops. If the dialog is canceled, the action gets ignored for 150 ms, so a long task may finish.
 
-### Audible activity
+### 🔉 Audible activity
 
 When `settings.tickLog` in `_svelteStore.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when (too) much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
 
