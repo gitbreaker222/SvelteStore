@@ -4,7 +4,7 @@ Template for client side svelte store _(unofficial)_
 
 ![store internal diagram](./docs/Svelte%20Store.png)
 
-live demo: https://svelte.dev/repl/a76e9e11af784185a39020fec02b7733?version=3.19.1
+live demo: https://svelte.dev/repl/a76e9e11af784185a39020fec02b7733?version=3.31.2
 
 ## Quick start
 
