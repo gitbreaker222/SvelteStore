@@ -85,7 +85,7 @@ If the users confirms the reload, the window is asked to reload and an error is 
 
 ### 🔉 Audible activity
 
-When `settings.tickLog` in `_svelteStore.js` is turned on, every action makes a "tick"/"click" sound. This way you simply hear, when (too) much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
+When `settings.tickLog` in `_svelteStore.js` is turned on, every action makes a "tick"/"click" sound. Inspired by detectors for radio-activity ☢️, this way you simply hear, when too much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
 
 ### Environments: Dev / Prod
 
