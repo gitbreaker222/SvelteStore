@@ -1,6 +1,6 @@
 # Svelte Store
 
-![logo](./docs/Svelte%20Store%20Logo%20transparent.svg)
+![logo](./docs/Svelte%20Store%20Logo.png)
 
 Template for client side svelte store _(unofficial)_
 
