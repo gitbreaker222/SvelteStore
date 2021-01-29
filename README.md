@@ -76,7 +76,7 @@ const [storeIn, storeOut] = useStore(new State(), {
 
 SvelteStore can break unwanted endless circles of action calls after about 3 seconds, if an action gets called with an interval of &lt; 150 ms.
 
-This feature can be turned off in `_svelteStore.js` with `settings.loopGuard: false`. It is available in prod-mode and active by default.
+This feature can be turned off in `_svelteStore.js` with `settings.loopGuard: false`. *This is a debugging feature and deactivated in prod-mode.*
 
 ![confirm dialog asking to reload when action is called infinitely](./docs/infinite%20loop%20detection.png)  
 [screen recording of stopping infinite loops with a confirm dialog about reloading the window](./docs/infinite%20loop%20detection.webm)
