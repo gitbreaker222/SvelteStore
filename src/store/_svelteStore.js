@@ -3,7 +3,7 @@ import { writable } from "svelte/store"
 const settings = {
   isProd: __process.env.isProd,
   isTickLog: true, // DEBUG FEATURE
-  isLoopGuard: true,
+  isLoopGuard: true, // DEBUG FEATURE
 }
 
 const logPrefix = [
@@ -179,7 +179,7 @@ export const useStore = (state, opts) => {
     let callbackResult
 
     update(state => {
-      if (settings.isLoopGuard && loopGuard.register(actionName)) return state
+      if (settings.isLoopGuard && loopGuard.register(actionName)) return state // DEBUG FEATURE
 
       callbackResult = callback(state)
 
