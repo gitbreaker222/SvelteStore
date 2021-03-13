@@ -47,28 +47,28 @@ const checkType = (value, newValue, name = "") => {
 const audioCtx = new AudioContext()
 
 const tickLog = async () => {
-  const duration = .1
-  const freq = 1 / duration
+  function playAudio(frequency) {
+    const duration = 0.1
+    let vol = audioCtx.createGain()
+    vol.gain.value = 0.02
+    vol.connect(audioCtx.destination)
 
-  let osc = audioCtx.createOscillator()
-  osc.type = "sawtooth"
-  osc.frequency.value = freq
-
-  let vol = audioCtx.createGain()
-  vol.gain.value = 0.05
-
-  osc.connect(vol)
-  vol.connect(audioCtx.destination)
-
-  osc.start()
-  osc.stop(audioCtx.currentTime + duration)
+    let osc = audioCtx.createOscillator()
+    osc.type = "sawtooth"
+    osc.frequency.value = frequency
+    osc.connect(vol)
+    osc.start()
+    osc.stop(audioCtx.currentTime + duration)
+  }
+  playAudio(7786)
+  playAudio(5467)
 }
 
 const logUpdate = (state, newState, action, storeName) => {
   const _state = {}
   const _newState = {}
 
-  Object.keys(state)
+  const changes = Object.keys(state)
     .filter(key => state[key] !== newState[key])
     .map(key => {
       _state[key] = state[key]
@@ -80,12 +80,16 @@ const logUpdate = (state, newState, action, storeName) => {
     after: _newState
   }
 
-  console.log(...logPrefix, `${storeName} changed`)
-  console.groupCollapsed(
-    `${action || 'Unnamed action'}`
-  )
-  console.table(update)
-  console.groupEnd()
+  if (changes.length) {
+    console.log(...logPrefix, storeName, 'changed by:')
+    console.groupCollapsed(
+      `${action || 'Unnamed action'}`
+    )
+    console.table(update)
+    console.groupEnd()
+  } else {
+    console.log(...logPrefix, storeName, 'unchanged by:', action)
+  }
   if (settings.isTickLog) tickLog()
   try {
     sessionStorage.setItem(
@@ -93,7 +97,7 @@ const logUpdate = (state, newState, action, storeName) => {
       JSON.stringify(newState)
     )
   } catch (e) {
-    console.warn(...logPrefix, "sessionStorage needs Same-Origin-Policy to work")
+    console.debug(...logPrefix, "Cannot show current state in sessionStorage (Same-Origin-Policy). Am I in a sandbox?")
   }
 }
 /* DEBUG FEATURE END ================= */
@@ -179,7 +183,7 @@ export const useStore = (state, opts) => {
     let callbackResult
 
     update(state => {
-      if (settings.isLoopGuard && loopGuard.register(actionName)) return state // DEBUG FEATURE
+      if (settings.isLoopGuard && loopGuard.register(actionName)) return state
 
       callbackResult = callback(state)
 

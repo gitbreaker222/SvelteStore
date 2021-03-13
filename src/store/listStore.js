@@ -50,3 +50,22 @@ export const nextItem = () => {
 
   return setCurrent(item)
 }
+
+export const busyTask = () => {
+  const duration = 3000 //ms
+  const interval = 100 //ms
+
+  const intervalId = window.setInterval(
+    () => {
+      console.log('busy')
+      return storeIn.update(
+        'performanceDrain',
+        state => ({ ...state, item: { id: Math.random() } })
+      )
+    }, interval
+  )
+  setTimeout(() => {
+    window.clearInterval(intervalId)
+  }, duration)
+  return
+}
