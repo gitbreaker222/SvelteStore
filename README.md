@@ -34,12 +34,12 @@ Svelte Store aims for *separation of concerns* by covering everything needed to 
 
 ## Features
 
-For detailed insight of *changes* or the *current state* , all you need is your browsers dev-tools. No plugins, zero dependencies _(besides svelte)_.
+For detailed insight of *changes* or the *current state* , all you need is your browsers dev-tools. No plugins, zero 0️⃣ dependencies _(besides svelte)_.
 
 - ↔️ Track state diffs
 - 🔍 Inspect current state
 - ⚠️ Type warnings
-- 📌 Persistent storage with a singe switch
+- 📌 Persistent storage with a single switch
 - ♾️ Infinite loop detection
 - 🔉 Audible activity
 
