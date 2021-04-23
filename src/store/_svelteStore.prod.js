@@ -44,7 +44,7 @@ export const useStore = (state, opts) => {
   }
 
   const interceptSet = (actionName, newState) => {
-    interceptUpdate(actionName, () => newState)
+    return interceptUpdate(actionName, () => newState)
   }
 
   const get = () => currentState
