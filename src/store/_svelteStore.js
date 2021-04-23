@@ -1,7 +1,6 @@
 import { writable } from "svelte/store"
 
 const settings = {
-  isProd: __process.env.isProd,
   isTickLog: true, // DEBUG FEATURE
   isLoopGuard: true, // DEBUG FEATURE
 }
@@ -163,11 +162,14 @@ Action has been called repeatedly with an interval of less than ${repeatDelay} m
   }
 }
 
-export const useStore = (state, opts) => {
-  const {
+export const useStore = (
+  state,
+  {
     name = "unnamed state",
     persist = false,
-  } = opts
+    isProd = false,
+  }
+) => {
   const persistName = `svelteStore.${name}`
   if (persist) {
     const persistedState = persistRead(persistName)
@@ -175,7 +177,7 @@ export const useStore = (state, opts) => {
     else persistWrite(persistName, state)
   }
   console.info(...logPrefix, name, state) // DEBUG FEATURE
-  const initialState = !settings.isProd ? deepCopy(state) : null // DEBUG FEATURE
+  const initialState = !isProd ? deepCopy(state) : null // DEBUG FEATURE
   const { subscribe, update, set } = writable(state)
   let currentState = { ...state }
 
@@ -189,7 +191,7 @@ export const useStore = (state, opts) => {
 
       function main(_state, asyncResolved = false) {
         /* DEBUG FEATURE ===================== */
-        if (!settings.isProd) {
+        if (!isProd) {
           checkSpelling(initialState, _state)
           Object.keys(initialState).map(key => {
             checkType(initialState[key], _state[key], key)
