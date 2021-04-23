@@ -6,7 +6,8 @@
   "globals": {
     "process": true,
     "__process": true,
-    "require": true
+    "require": true,
+    "module": true
   },
   "parserOptions": {
     "ecmaVersion": 9,

@@ -28,9 +28,11 @@ export const action = () => {
     return { ...state, num: num + 100 }
   })
 }
+
 const _defer = value => new Promise(resolve => {
-  window.setTimeout(() => resolve(value), 1000)
+  window.setTimeout(() => resolve(value), 500)
 })
+
 export const asyncAdd1 = async () => {
   return storeIn.update('asyncAdd1', async state => {
     let { num } = state
@@ -47,14 +49,14 @@ export const asyncSetNum = async (value) => {
 }
 
 export const multiAction = async () => {
-  let state = storeOut.get()
-
   const numToList = state => {
     let { num, numList } = state
     numList = [...numList]
     numList.push(num)
     return { ...state, numList, num }
   }
+  
+  let state = storeOut.get()
 
   await asyncSetNum(state.num + 5)
   await asyncAdd1()
