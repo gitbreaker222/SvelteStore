@@ -39,9 +39,9 @@ export default {
 	plugins: [
 		replace({
 			// https://medium.com/dev-cafe/how-to-setup-env-variables-to-your-svelte-js-app-c1579430f032
-			__process: JSON.stringify({
+			process: JSON.stringify({
 				env: {
-					isProd: production,
+					NODE_ENV: production ? 'prod' : 'debug',
 				},
 			}),
 		}),
