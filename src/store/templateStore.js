@@ -15,8 +15,8 @@ const [storeIn, storeOut] = useStore(new State(), {
 export const templateStore = storeOut
 
 // Actions
-export function reset() {
-  return storeIn.set('reset', new State())
+export function reset(customState = null) {
+  return storeIn.set('reset', customState || new State())
 }
 
 //=== Everything below this line can be safely deleted ===
