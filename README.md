@@ -19,7 +19,8 @@ Navigate to [localhost:5000](http://localhost:5000) and open dev-tools.
 
 ## Usage
 
-- Copy `src/store/_svelteStore.js` in your project
+- Copy all `src/store/_svelteStore.*` files in your project
+  - For production builds _rollup_ uses tree-shaking to ignore the debug version 👍
 - Create a new file `myStore.js` based on `src/store/templateStore.js` next to `_svelteStore.js`
 - In `templateStore.js` replace all "templateStore" with "myStore"
 - Delete everything below "Demo-Actions"
@@ -41,6 +42,7 @@ For detailed insight of *changes* or the *current state* , all you need is your 
 - ⚠️ Type warnings
 - 📌 Persistent storage with a single switch
 - ♾️ Infinite loop detection
+- 🃏 Testable Actions
 - 🔉 Audible activity
 
 ### ↔️ Before/After diffs on state updates:
@@ -83,15 +85,40 @@ This feature can be turned off in `_svelteStore.js` with `settings.loopGuard: fa
 
 If the users confirms the reload, the window is asked to reload and an error is thrown, to break e.g. `for` loops. If the dialog is canceled, the action gets ignored for 150 ms, so a long task may finish.
 
+### 🃏 Testable Actions
+
+SvelteStore gives you a hand getting startet with unit tests for _actions_. It's a good advice, to keep the "reset" action from the templateStore, so you can reset or override the default state before every test.
+
+![screenshot of VS-Code. The test stopped for debugging at a breakpoint set in an action](docs/svelteStore%20test%20debugger.png)
+
+The setup in this demo-app is based on [this article][test-article] / [testing-library.com][testing-library] and uses [jest](https://jestjs.io/).
+
+[test-article]: https://dev.to/jpblancodb/testing-svelte-components-with-jest-53h3
+[testing-library]: https://testing-library.com/docs/svelte-testing-library/intro.
+
+Go for a test ride with `npm test` or `npm run test:watch` to automatically rerun the tests on file-save ⚡.
+
+To write a new test for an action:
+1. Arrange: `reset()` the state and optionally override it
+1. Act: Call an action an safe the returned new state
+1. Assert: Write an expactation for the new state
+
+See [templateStore.test.js](./src/store/templateStore.test.js) for some examples.
+
 ### 🔉 Audible activity
 
 When `settings.tickLog` in `_svelteStore.js` is turned on, every action makes a "tick"/"click" sound. Inspired by detectors for radio-activity ☢️, this way you simply hear, when too much is going on. Louder clicks mean more updates at the same time. Of course only in dev-mode.
 
 ### Environments: Dev / Prod
 
-No debugging-functions in production, to improve performance. In `_svelteStore.js` with `settings.isDev: false` all activity logs can be turned off. This is automatically toggled with the rollup configuration: On with `npm run dev` - off with `npm run build` and `npm start`.
+No debugging-functions in production / test-runs, to improve performance. `_svelteStore.js` returns the debug version only if `process.env.NODE_ENV === 'debug'`.
 
-In `_svelteStore.prod.js` all debugging functions have been removed to reduce file-size
+|command|`NODE_ENV` value|config by|
+|---|---|---|
+|`npm run dev`|debug|`rollup.config.js`|
+|`npm run build`|prod|`rollup.config.js`|
+|`npm test`|test|[jest](https://jestjs.io/docs/getting-started#using-babel)|
+
 
 ## Two Rules 📖
 

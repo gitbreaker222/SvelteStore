@@ -28,13 +28,15 @@ it('sets num async', async () => {
 })
 
 it('compares two specific states', async () => {
-  reset({
+  const stateBefore = {
     num: 660,
     numList: [4, 2],
-  })
-  const newState = await multiAction()
-  expect(newState).toMatchObject({
+  }
+  const stateAfter = {
     num: 677,
     numList: [4, 2, 666, 677]
-  })
+  }
+  reset(stateBefore)
+  const newState = await multiAction()
+  expect(newState).toMatchObject(stateAfter)
 })
