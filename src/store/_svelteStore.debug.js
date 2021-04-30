@@ -17,7 +17,23 @@ const logPrefix = [
 ]
 
 /* DEBUG FEATURE ===================== */
-const deepCopy = value => JSON.parse(JSON.stringify(value))
+export const deepCopy = value => {
+	const replacedNaN = 'svelteStoreReplace:NaN'
+	const replacedInfinityP = 'svelteStoreReplace:Infinity+'
+	const replacedInfinityN = 'svelteStoreReplace:Infinity-'
+	const deepCopyStr = JSON.stringify(value, function(name, _value) {
+    if (Number.isNaN(_value)) return replacedNaN
+    if (_value === Infinity) return replacedInfinityP
+    if (_value === -Infinity) return replacedInfinityN
+		return _value
+	})
+	return JSON.parse(deepCopyStr, function(name, _value) {
+    if (_value === replacedNaN) return NaN
+    if (_value === replacedInfinityP) return Infinity
+    if (_value === replacedInfinityN) return -Infinity
+		return _value
+	})
+}
 
 const checkSpelling = (state, _state) => {
   const correctKeys = Object.keys(state)
