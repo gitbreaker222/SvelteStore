@@ -1,3 +1,4 @@
+[![Node.js CI](https://github.com/gitbreaker222/SvelteStore/actions/workflows/node.js.yml/badge.svg)](https://github.com/gitbreaker222/SvelteStore/actions/workflows/node.js.yml)
 # Svelte Store
 
 ![logo](./docs/Svelte%20Store%20Logo.png)
