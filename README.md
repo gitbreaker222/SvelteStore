@@ -24,7 +24,7 @@ Navigate to [localhost:5000](http://localhost:5000) and open dev-tools.
 - Copy all `src/store/_svelteStore.*` files in your project
   - For production builds _rollup_ uses tree-shaking to ignore the debug version 👍
 - Create a new file `myStore.js` based on `src/store/templateStore.js` next to `_svelteStore.js`
-- In `templateStore.js` replace all "templateStore" with "myStore"
+- In `myStore.js` replace all "templateStore" with "myStore"
 - Delete everything below "Demo-Actions"
 - Define initial state in `State` as simple JSON
 - Write actions that call `storeIn.update(actionName, updaterFn)`
