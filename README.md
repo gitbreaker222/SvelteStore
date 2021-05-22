@@ -59,6 +59,10 @@ See the full state tree to understand the current state behind the GUI. *This is
 
 ![full state](./docs/full-state.png)
 
+Learn more about Storage-Inspector:
+- Firefox: https://developer.mozilla.org/en-US/docs/Tools/Storage_Inspector
+- Chrome: https://developer.chrome.com/docs/devtools/storage/sessionstorage/
+
 ### ⚠️ Automatic type warnings on state updates:
 
 The initial `State` of a SvelteStore also acts as type definition for the top level fields. If an action updates a field with another type, a warning will be shown in dev-tools console. No replacement for TypeScript, but free basic type checks. *This is a debugging feature and deactivated in prod-mode.*
