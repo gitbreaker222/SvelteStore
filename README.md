@@ -154,7 +154,7 @@ let { list } = state;
 // mutated objects won't be detected as a change
 list.push(1234);
 
-return Object.assign(state, { list });
+return { ...state, list });
 ```
 
 bad: *deep copy*
